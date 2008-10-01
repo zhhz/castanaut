@@ -163,8 +163,12 @@ module Castanaut
     # Use Leopard's native text-to-speech functionality to emulate a human
     # voice saying the narrative text.
     #
-    def say(narrative)
-      run(%Q`say "#{escape_dq(narrative)}"`)
+    def say(narrative, voice = nil)
+			if voice_exist?(voice)
+					run(%Q`say -v #{voice} #{escape_dq(narrative)}`)
+			else
+	      run(%Q`say "#{escape_dq(narrative)}"`)
+			end
     end
 
     # Starts saying the narrative text, and simultaneously begins executing
@@ -293,7 +297,49 @@ module Castanaut
       @end_credits << blk
     end
 
+		# test to see if this voice is available
+		#
+		def voice_exist?(voice_name)
+			@cached_voice_names = get_system_vioce_names if @cached_voice_names.nil?
+			@cached_voice_names.include?(camelcase(voice_name))
+		end
+		
+		# list all the voice names available from OS X
+		#
+		def voice_names
+			@cached_voice_names = get_system_vioce_names if @cached_voice_names.nil?
+			@cached_voice_names
+		end
+
     protected
+
+			# return the camel case of the given string
+			#
+		  def camelcase(name)
+				return if name.nil?
+		    str = name.downcase.dup
+		    str.gsub!(/(?:_+|-+)([a-z])/){ $1.upcase }
+		    str.gsub!(/(\A|\s)([a-z])/){ $1 + $2.upcase }
+		    str
+		  end
+
+			# I would like to give the credit to Martin Michel
+			# -- returning a list containing the names of the system voices currently
+			# -- installed on the Mac OS X system
+			# -- >>> using a Python script named «sysvoices.py» to accomplish my task
+			#
+			def get_system_vioce_names
+				py_script = File.join(PATH, "scripts", "sysvoices.py")
+				names = execute_applescript(%Q`
+					set pyscriptpath to POSIX path of ("#{py_script}")
+					set command to "/usr/bin/python " & quoted form of pyscriptpath
+					set command to command as «class utf8»
+					set sysvoicenames to paragraphs of (do shell script command)
+					return sysvoicenames
+				`)
+				names.chop.split(', ')
+			end
+
       def execute_applescript(scpt)
         File.open(FILE_APPLESCRIPT, 'w') {|f| f.write(scpt)}
         result = run("osascript #{FILE_APPLESCRIPT}")
