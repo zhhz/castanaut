@@ -341,6 +341,7 @@ Here's a simple screenplay:
 === You are listening voice "Cellos" now if available on your system.
 EOS
 				say "Dum dum dum dum dum dum dum he he he ho ho ho fa lah lah lah lah lah lah fa lah full hoo hoo hoo", "Cellos"
+				say "Sorry if your speaker is too loud.", "whisper"
 			  exit status
 		end
 
