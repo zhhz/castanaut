@@ -148,8 +148,6 @@ Reason 1 is to confirm that it is installed correctly. Reason 2 is to set up
 the permissions on the utility that controls your mouse and keyboard during
 Castanaut movies. You may be asked for a password here.
 
-If you just see a "ScreenplayNotFound" exception here, everything's good.
-
 == LICENSE:
 
 Copyright (C) 2008 Inventive Labs.

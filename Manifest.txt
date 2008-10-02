@@ -16,6 +16,7 @@ lib/plugins/mousepose.rb
 lib/plugins/safari.rb
 scripts/coords.js
 scripts/gebys.js
+scripts/sysvoices.py
 tasks/ann.rake
 tasks/annotations.rake
 tasks/doc.rake

@@ -10,7 +10,8 @@ module Castanaut
       perms_test
 
       if !screenplay || !File.exists?(screenplay)
-        raise Castanaut::Exceptions::ScreenplayNotFound 
+				usage(0, 'Castanaut: Automate your screencasts.')
+        # raise Castanaut::Exceptions::ScreenplayNotFound 
       end
       @screenplay_path = screenplay
 
@@ -300,8 +301,7 @@ module Castanaut
 		# test to see if this voice is available
 		#
 		def voice_exist?(voice_name)
-			@cached_voice_names = get_system_vioce_names if @cached_voice_names.nil?
-			@cached_voice_names.include?(camelcase(voice_name))
+			voice_names.include?(camelcase(voice_name))
 		end
 		
 		# list all the voice names available from OS X
@@ -309,6 +309,39 @@ module Castanaut
 		def voice_names
 			@cached_voice_names = get_system_vioce_names if @cached_voice_names.nil?
 			@cached_voice_names
+		end
+		
+		# disaplay usage information
+		#
+		def usage(status, msg = nil)
+			  output = (status == 0 ? $stdout : $stderr)
+			  output.puts msg if msg
+			  output.print(<<EOS)
+Usage: #{File.basename $0} [screenplayfile]
+
+=== Writing screenplays
+You write your screenplays as Ruby files. Castanaut has been designed to 
+read fairly naturally to the non-technical, within Ruby's constraints.
+
+Here's a simple screenplay:
+  plugin "safari"
+  launch "Safari", at(32, 32, 800, 600)
+  url "http://www.google.com"
+  pause 4
+  move to_element('input[name="q"]')
+  click
+  type "Castanaut"
+  move to_element('input[type="submit"]')
+  click
+  pause 4
+  say "Oh. I was hoping for more results."
+  say "Infact it looks good!", "Whisper"
+=== Available system voices
+#{voice_names.inspect}
+=== You are listening voice "Cellos" now if available on your system.
+EOS
+				say "Dum dum dum dum dum dum dum he he he ho ho ho fa lah lah lah lah lah lah fa lah full hoo hoo hoo", "Cellos"
+			  exit status
 		end
 
     protected
