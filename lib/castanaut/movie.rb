@@ -175,9 +175,9 @@ module Castanaut
     # Starts saying the narrative text, and simultaneously begins executing
     # the given block. Waits until both are finished.
     #
-    def while_saying(narrative)
+    def while_saying(narrative, voice = nil)
       if block_given?
-        fork { say(narrative) }
+        fork { say(narrative, voice) }
         yield
         Process.wait
       else
